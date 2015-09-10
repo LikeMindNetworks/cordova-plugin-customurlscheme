@@ -1,3 +1,6 @@
+# LikeMindNetworks Fork
+-Android: Adds the app to the share menu for text type data.
+
 # Custom URL scheme PhoneGap Plugin
 #### launch your app by a link like this: `mycoolapp://`
 for iOS and Android, by [Eddy Verbruggen](http://www.x-services.nl)

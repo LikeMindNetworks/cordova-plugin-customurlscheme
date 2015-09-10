@@ -22,12 +22,20 @@ public class LaunchMyApp extends CordovaPlugin {
     if (ACTION_CHECKINTENT.equalsIgnoreCase(action)) {
       final Intent intent = ((CordovaActivity) this.webView.getContext()).getIntent();
       final String intentString = intent.getDataString();
+      final String extraText = intent.getStringExtra(Intent.EXTRA_TEXT);
+
       if (intentString != null && intent.getScheme() != null) {
+        // data from custom url
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, intent.getDataString()));
         intent.setData(null);
+      } else if (extraText != null) {
+        // text from share menu intent
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, extraText));
+        intent.removeExtra(Intent.EXTRA_TEXT);
       } else {
         callbackContext.error("App was not started via the launchmyapp URL scheme. Ignoring this errorcallback is the best approach.");
       }
+
       return true;
     } else {
       callbackContext.error("This plugin only responds to the " + ACTION_CHECKINTENT + " action.");
@@ -38,11 +46,26 @@ public class LaunchMyApp extends CordovaPlugin {
   @Override
   public void onNewIntent(Intent intent) {
     final String intentString = intent.getDataString();
+    final String extraText = intent.getStringExtra(Intent.EXTRA_TEXT);
+    String outputString = null;
+
     if (intentString != null && intent.getScheme() != null) {
+      // data from custom url
       intent.setData(null);
+
+      outputString = intentString;
+    } else if (extraText != null) {
+      // text from share menu intent
+      intent.removeExtra(Intent.EXTRA_TEXT);
+
+      outputString = extraText;
+    }
+
+    if (outputString != null) {
       try {
-        StringWriter writer = new StringWriter(intentString.length() * 2);
-        escapeJavaStyleString(writer, intentString, true, false);
+        StringWriter writer = new StringWriter(outputString.length() * 2);
+        escapeJavaStyleString(writer, outputString, true, false);
+
         webView.loadUrl("javascript:handleOpenURL('" + writer.toString() + "');");
       } catch (IOException ignore) {
       }
