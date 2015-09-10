@@ -1,5 +1,5 @@
 # LikeMindNetworks Fork
--Android: Adds the app to the share menu for text type data.
+- Android: Adds the app to the share menu for text type data. The app will recieve handleOpenURL with the text in the same manner as from custom urls.
 
 # Custom URL scheme PhoneGap Plugin
 #### launch your app by a link like this: `mycoolapp://`
