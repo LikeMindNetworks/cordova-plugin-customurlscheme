@@ -19,11 +19,13 @@ public class LaunchMyApp extends CordovaPlugin {
 
   private static String externalString;
 
-  // used to store external string from an external Java class method that
-  // executes before "ondeviceready" event, for instance onNewIntent() from
-  // MainActivity, so it can be used in execute() method -- this is to better
-  // handle the case when external data is received upon app resuming from
-  // Stopped/Hidden state
+  /*
+   * used to store external string from an external Java class method that
+   * executes before "ondeviceready" event, for instance onNewIntent() from
+   * MainActivity, so it can be used in execute() method -- this is to better
+   * handle the case when external data is received upon app resuming from
+   * Stopped/Hidden state
+   */
   public static void setExternalString(String extStr) {
     externalString = extStr;
   }
