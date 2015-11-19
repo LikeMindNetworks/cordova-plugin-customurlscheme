@@ -17,6 +17,17 @@ public class LaunchMyApp extends CordovaPlugin {
 
   private static final String ACTION_CHECKINTENT = "checkIntent";
 
+  private static String externalString;
+
+  // used to store external string from an external Java class method that
+  // executes before "ondeviceready" event, for instance onNewIntent() from
+  // MainActivity, so it can be used in execute() method -- this is to better
+  // handle the case when external data is received upon app resuming from
+  // Stopped/Hidden state
+  public static void setExternalString(String extStr) {
+    externalString = extStr;
+  }
+
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
     if (ACTION_CHECKINTENT.equalsIgnoreCase(action)) {
@@ -28,10 +39,14 @@ public class LaunchMyApp extends CordovaPlugin {
         // data from custom url
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, intent.getDataString()));
         intent.setData(null);
-      } else if (extraText != null) {
+      } else if (extraText != null && externalString == null) {
         // text from share menu intent
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, extraText));
         intent.removeExtra(Intent.EXTRA_TEXT);
+      } else if (externalString != null) {
+        // text from external Java class method that executes before "ondeviceready" event
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, externalString));
+        externalString = null;
       } else {
         callbackContext.error("App was not started via the launchmyapp URL scheme. Ignoring this errorcallback is the best approach.");
       }
